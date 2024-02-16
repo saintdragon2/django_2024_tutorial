@@ -1,0 +1,1 @@
+# django_2024_tutorial
