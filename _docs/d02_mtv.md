@@ -250,3 +250,6 @@ def board_list(request):
 {% endblock %}
 
 ```
+
+성공!
+![board page](imgs/2024_0217_1610.png)
