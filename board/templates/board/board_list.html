@@ -1,0 +1,29 @@
+{% extends 'single_pages/base.html' %}
+
+{% block content %}
+  <h1 class="text-3xl font-bold underline">게시판</h1>
+
+  <div class="overflow-x-auto">
+    <table class="table">
+      
+      <thead>
+        <tr>
+          <th></th>
+          <th>Title</th>
+          <th>author</th>
+          <th>Created at</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for board in board_list %}
+        <tr>
+          <th>{{ board.pk }}</th>
+          <td>{{ board.title }}</td>
+          <td>{{ board.author }}</td>
+          <td>{{ board.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
