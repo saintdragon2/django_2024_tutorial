@@ -7,3 +7,4 @@
 ## 목차
 - [장고 초기화](_docs/d00_django_start.md)
 - [app, view, template](_docs/d01_app_view_template.md)
+- [MTV (Model, Template, View)](_docs/d02_mtv.md)
