@@ -10,3 +10,14 @@ def board_list(request):
             'board_list': board_list
         }
     )
+    
+
+def board_detail(request, pk):
+    board = Board.objects.get(pk=pk)
+    return render(
+        request, 
+        'board/board_detail.html', 
+        {
+            'board': board
+        }
+    )

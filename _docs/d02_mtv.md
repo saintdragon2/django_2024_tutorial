@@ -253,3 +253,137 @@ def board_list(request):
 
 성공!
 ![board page](imgs/2024_0217_1610.png)
+
+### Board detail view
+실제 게시판은 해당 게시물을 클릭하면 그 게시물 페이지로 들어간다. 우리도 그렇게 하자. 
+
+일단 `board/urls.py`에 정의한다. 
+이렇게 하면, `127.0.0.1:8000/board/1/`이라고 했을 때, `primary_key`가 1인 Board 레코드를 DB에서 가져오는 코드를 views.py에 만들어야 한다.  
+```python
+# board/urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('<int:pk>/', views.board_detail, name='board_detail'),
+    path('', views.board_list, name='board_list'),
+]
+
+```
+
+`Board` 모델에 `get_absolute_url` 메소드를 만들자. 
+
+```python
+# board/models.py
+
+from django.db import models
+from django.urls import reverse
+
+class Board(models.Model):
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    
+    author = models.ForeignKey(
+        'auth.User',
+        on_delete=models.CASCADE,
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
+    
+    def get_absolute_url(self):
+        return reverse("board_detail", kwargs={"pk": self.pk})
+    
+```
+
+> ![Note]
+>
+> 이 `get_absolute_url`는 Django 프레임워크에서 사용되는 모델 클래스의 메서드인 get_absolute_url을 정의하고 있습니다. 이 메서드는 모델 객체의 절대 URL을 반환하는 역할을 합니다.
+>
+> get_absolute_url 메서드는 Django의 내장 함수인 reverse를 사용하여 URL을 생성합니다. reverse 함수는 URL 패턴의 이름을 기반으로 해당 URL을 생성하는 역할을 합니다. 이 코드에서는 "board_detail"이라는 URL 패턴을 사용하고 있습니다.
+>
+> reverse 함수의 두 번째 인자로는 URL 패턴에 필요한 매개변수를 전달합니다. 이 코드에서는 kwargs라는 이름의 딕셔너리를 사용하여 "pk"라는 키와 self.pk 값을 전달하고 있습니다. 이렇게 전달된 매개변수는 URL 패턴에서 사용되어 해당 모델 객체의 고유 식별자를 나타냅니다.
+>
+> 따라서, get_absolute_url 메서드는 해당 모델 객체의 절대 URL을 반환하게 됩니다. 이 URL은 reverse 함수를 사용하여 "board_detail" URL 패턴을 기반으로 생성되며, 모델 객체의 고유 식별자인 self.pk 값이 URL에 포함됩니다.
+
+
+이제 `views.py`에 board_detail 함수를 정의하자. 
+```python
+# board/views.py
+from django.shortcuts import render
+from .models import Board
+
+...
+
+def board_detail(request, pk):
+    board = Board.objects.get(pk=pk)
+    return render(
+        request, 
+        'board/board_detail.html', 
+        {
+            'board': board
+        }
+    )
+```
+
+`http://127.0.0.1:8000/board/1/`에 가보면 아래와 같이 template가 없다고 한다. 
+
+![no template](imgs/2024_0217_1733.png)
+
+`board/templates/board/board_detail.html`를 만들자. 
+```html
+<!-- board/templates/board/board_detail.html -->
+
+{% extends "single_pages/base.html" %}
+
+{% block content %}
+    <h1 class="text-3xl font-bold underline"><a href="/board/">Board</a></h1>
+    
+    <h2 class="text-4xl font-bold my-3">{{ board.title }}</h2>
+    <p>{{ board.content | linebreaks }}</p>
+{% endblock %}
+
+```
+된다. 
+![board_detail page](imgs/2024_0217_1741.png)
+
+이제 board_list.html에서 클릭해서 넘어올 수 있도록 수정한다. 
+
+> [!IMPORTANT]
+>
+> template에서 모델의 메소드를 사용할 때 괄호를 쓰지 않는다!
+
+```html
+{% extends 'single_pages/base.html' %}
+
+{% block content %}
+  <h1 class="text-3xl font-bold underline">게시판</h1>
+
+  <div class="overflow-x-auto">
+    <table class="table">
+      
+      <thead>
+        <tr>
+          <th></th>
+          <th>Title</th>
+          <th>author</th>
+          <th>Created at</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for board in board_list %}
+        <tr>
+          <th>{{ board.pk }}</th>
+          <td><a href="{{ board.get_absolute_url }}">{{ board.title }}</a></td>
+          <td>{{ board.author }}</td>
+          <td>{{ board.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+```
