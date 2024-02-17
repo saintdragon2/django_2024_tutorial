@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from .models import Board
+from rest_framework import viewsets
+from .serializers import BoardSerializer
 
 def board_list(request):
     board_list = Board.objects.all()
@@ -21,3 +23,8 @@ def board_detail(request, pk):
             'board': board
         }
     )
+    
+    
+class BoardViewSet(viewsets.ModelViewSet):
+    queryset = Board.objects.all()
+    serializer_class = BoardSerializer
