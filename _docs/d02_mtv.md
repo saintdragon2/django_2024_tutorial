@@ -6,7 +6,7 @@
 MVC의 개념은 아래 그림과 같다. 
 
 #### MVC
-![mvc](imgs/mvc.png)
+![mvc](imgs/mvc_.png)
 (이미지출처: https://tibetsandfox.tistory.com/16)
 
 #### MTV
