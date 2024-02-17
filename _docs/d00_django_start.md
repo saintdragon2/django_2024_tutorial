@@ -112,3 +112,19 @@ Superuser created successfully.
 ```
 
 ![로그인 된다](imgs/2024_0217_0032.png)
+
+### 초기화만 했을 뿐인데 어떻게 된걸까?
+
+`127.0.0.1:8000/admin/`로 시작하는 URL로 접근했을 때에 장고가 해야할 일이 기본적으로 정해져있다.
+
+`admin`은 장고에서 기본으로 제공한다. 이 맛에 장고 쓴다.
+```python
+# project 폴더 urls.py
+
+from django.contrib import admin
+from django.urls import path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+]
+```

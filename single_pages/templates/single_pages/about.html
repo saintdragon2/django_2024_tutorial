@@ -1,0 +1,17 @@
+{% extends 'single_pages/base.html' %}
+
+{% block content %}
+  <h1 class="text-3xl font-bold underline">About Page</h1>
+  <p>This is the about page of our website.</p>
+
+  <p>{{ greeting }}</p>
+
+  <ul>
+    {% for i in numbers %}
+      <li>{{ i }}</li>
+    {% endfor %}
+  </ul>
+
+  <a class="btn" href="{% url 'index' %}">Back to Home</a>
+  <a class="btn" href="/">첫 페이지로!</a>
+{% endblock %}
